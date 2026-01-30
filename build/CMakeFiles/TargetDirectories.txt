@@ -1,0 +1,3 @@
+C:/Users/pw0/sinsd/build/CMakeFiles/VoiceApp.dir
+C:/Users/pw0/sinsd/build/CMakeFiles/edit_cache.dir
+C:/Users/pw0/sinsd/build/CMakeFiles/rebuild_cache.dir
