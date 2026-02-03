@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <stdio.h>
+#include "SDL3/SDL_video.h"
 #include "some_stuff.h"
 #include <stdlib.h>
 
@@ -42,19 +43,9 @@ int main(int argc, char *argv[])
         SDL_SetRenderDrawColor(renderer, (color * cnt) % 255,
                               (color + cnt) % 255, (color - cnt) % 255, 255);
         SDL_Event event;
-
         capture_audio(out);
-        cords.fy = out[cords.cnt];
-        max < cords.fy ? max = cords.fy : max;
-        printf("%f\n", max);
-        cords.fx += 1. / 4096;
-        cords.cnt++;
-        if (cords.cnt == 4096){
-            cords.cnt = 0;
-            cords.fx = 0;
-        }
+        draw_audio(out, height*0.4f, 2.0f, height, width, renderer);
         convert_mic_data(&cords, width, height);
-        SDL_RenderLine(renderer, cords.x, cords.y, cords.x, cords.y);
 
         while(SDL_PollEvent(&event)){
             if (event.type == SDL_EVENT_QUIT) run_flag = 0;

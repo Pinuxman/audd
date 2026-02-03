@@ -18,5 +18,6 @@ void convert(uint32_t* x, uint32_t* y, double fx, double fy, uint32_t w, uint32_
 int init_mic(void);
 int capture_audio(float out[4096]);
 void convert_mic_data(Cords* cords, uint32_t w, uint32_t h);
+void draw_audio(float *audio, float scale, float thick, uint32_t h, uint32_t w, SDL_Renderer* renderer);
 
 #endif // zalupa
