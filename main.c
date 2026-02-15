@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     int run_flag = 1;
     double fase = 0;
     double shift = 0;
-    int clear = 0;
+    int clear = 1;
     uint32_t  color = 0;
     int cnt = 1;
     float max = 0;
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
         SDL_Event event;
         capture_audio(out);
 
-        draw_audio(out, 220.f, 3.0f, height, width, renderer);
+        draw_audio(out, 1000.f, 3.0f, height, width, renderer);
 
         while(SDL_PollEvent(&event)){
             if (event.type == SDL_EVENT_QUIT) run_flag = 0;

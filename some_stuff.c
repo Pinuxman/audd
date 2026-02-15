@@ -88,7 +88,7 @@ void draw_audio(float *audio, float scale, float thick, uint32_t h, uint32_t w, 
         }
 
         // Set color once (instead of per-vertex)
-        SDL_SetRenderDrawColor(renderer, 220, 240, 255, 255);  // cyan-ish, fully opaque
+        //SDL_SetRenderDrawColor(renderer, 220, 240, 255, 255);  // cyan-ish, fully opaque
 
         // One call → draws 4095 connected line segments
         SDL_RenderLines(renderer, points, n);
