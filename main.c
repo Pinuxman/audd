@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
                               (color + cnt) % 255, (color - cnt) % 255, 255);
         SDL_Event event;
         capture_audio(out);
-        draw_audio(out, height*0.4f, 2.0f, height, width, renderer);
-        convert_mic_data(&cords, width, height);
+
+        draw_audio(out, 220.f, 3.0f, height, width, renderer);
 
         while(SDL_PollEvent(&event)){
             if (event.type == SDL_EVENT_QUIT) run_flag = 0;

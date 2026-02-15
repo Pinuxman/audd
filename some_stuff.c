@@ -71,38 +71,27 @@ void convert_mic_data(Cords* cords, uint32_t w, uint32_t h){
     cords->y = (1 - (cords->fy + 1) / 2) * h;
 }
 
-void draw_audio(float *audio, float scale, float thick, uint32_t h, uint32_t w, SDL_Renderer* renderer){
-    float xstep = (1. / 4096) * w;
-    float mid = 0.5f * h;
-    SDL_Vertex verts[8192];
-    uint32_t idx[8192];
-    for(int i = 0;i < 4096; i++){
-        float x = i * xstep;
-        float y = mid + audio[i] * scale;
+void draw_audio(float *audio, float scale, float thick, uint32_t h, uint32_t w, SDL_Renderer *renderer){
+    const int n = 4096;
+    SDL_FPoint *points = SDL_malloc(sizeof(SDL_FPoint) * n);
+        if (!points) return;
 
-        verts[i*2+0].position = (SDL_FPoint){x, y+thick};
-        verts[i*2+1].position = (SDL_FPoint){x, y-thick};
+        float xstep = (float)w / (n - 1);   // full width usage
+        float mid    = h * 0.5f;
 
-        verts[i*2+0].color = (SDL_FColor){1,1,1,1};
-        verts[i*2+1].color = (SDL_FColor){1,1,1,1};
-    }
+        for (int i = 0; i < n; i++){
+            float x = i * xstep;
+            float y = mid + audio[i] * scale;
 
-    int k = 0;
+            points[i].x = x;
+            points[i].y = y;
+        }
 
-    for(int i = 0;i < 4096 - 1;i++){
-        int a = i * 2;
-        int b = i *2 + 1;
-        int c = i *2 + 2;
-        int d = i *2 + 3;
+        // Set color once (instead of per-vertex)
+        SDL_SetRenderDrawColor(renderer, 220, 240, 255, 255);  // cyan-ish, fully opaque
 
-        idx[k++] = a;
-        idx[k++] = b;
-        idx[k++] = c;
+        // One call → draws 4095 connected line segments
+        SDL_RenderLines(renderer, points, n);
 
-        idx[k++] = b;
-        idx[k++] = d;
-        idx[k++] = c;
-    }
-    SDL_RenderGeometry(renderer, NULL, verts, 8192, idx, k);
-    //SDL_RenderClear(renderer);
+        SDL_free(points);
 }
