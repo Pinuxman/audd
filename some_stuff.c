@@ -3,7 +3,40 @@
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_stdinc.h"
 #include <stdio.h>
-float samples[4096];
+#include "miniaudio.h"
+
+
+#define CAPTURE_SAMPLES 4096
+
+static ma_device device;
+static ma_mutex  audio_mutex;
+
+static float     audio_buffer[CAPTURE_SAMPLES];
+static ma_uint32 write_cursor = 0;
+
+static void data_callback(ma_device* device,
+                          void* output,
+                          const void* input,
+                          ma_uint32 frameCount)
+{
+    (void)device;
+    (void)output;
+
+    if (input == NULL) return;
+
+    const float* in = (const float*)input;
+
+    ma_mutex_lock(&audio_mutex);
+
+    for (ma_uint32 i = 0; i < frameCount; i++) {
+        audio_buffer[write_cursor++] = in[i];
+
+        if (write_cursor >= CAPTURE_SAMPLES)
+            write_cursor = 0;
+    }
+
+    ma_mutex_unlock(&audio_mutex);
+}
 
 void calc_sin(double* in, uint32_t n){
     in[0] = -PI;
@@ -22,46 +55,41 @@ static SDL_AudioStream *mic_stream = NULL;
 
 int init_mic(void)
 {
-    int count = 0;
-    SDL_AudioDeviceID *devs = SDL_GetAudioRecordingDevices(&count);
+    ma_device_config config;
 
-    for (int i = 0; i < count; i++) {
-        const char *name = SDL_GetAudioDeviceName(devs[i]);
-        printf("[%d] %s\n", i, name);
-    }
-    SDL_AudioSpec spec;
-    SDL_ResumeAudioStreamDevice(mic_stream);
-    spec.format   = SDL_AUDIO_F32; // float samples
-    spec.channels = 1;                // mono
-    spec.freq     = 44100;
+    config = ma_device_config_init(ma_device_type_capture);
+    config.capture.format   = ma_format_f32;
+    config.capture.channels = 1;
+    config.sampleRate       = 48000;
+    config.dataCallback     = data_callback;
 
-    mic_stream = SDL_OpenAudioDeviceStream(
-        SDL_AUDIO_DEVICE_DEFAULT_RECORDING,
-        &spec,
-        NULL,   // no callback: we’ll read manually
-        NULL
-    );
+    if (ma_device_init(NULL, &config, &device) != MA_SUCCESS)
+        return -1;
 
-    if (!mic_stream) {
-        SDL_Log("Failed to open mic stream: %s", SDL_GetError());
-        return 0;
-    }
+    if (ma_mutex_init(&audio_mutex) != MA_SUCCESS)
+        return -2;
 
-    // Start capturing
-    SDL_ResumeAudioStreamDevice(mic_stream);
-    return 1;
+    if (ma_device_start(&device) != MA_SUCCESS)
+        return -3;
+
+    return 0;
 }
 
 
-int capture_audio(float out[4096])
+int capture_audio(float out[CAPTURE_SAMPLES])
 {
-    int bytes = sizeof(float) * 4096;
+    ma_mutex_lock(&audio_mutex);
 
-    if (SDL_GetAudioStreamAvailable(mic_stream) < bytes)
-        return 0;
+    ma_uint32 cursor = write_cursor;
 
-    SDL_GetAudioStreamData(mic_stream, out, bytes);
-    return 1;
+    for (ma_uint32 i = 0; i < CAPTURE_SAMPLES; i++) {
+        ma_uint32 index = (cursor + i) % CAPTURE_SAMPLES;
+        out[i] = audio_buffer[index];
+    }
+
+    ma_mutex_unlock(&audio_mutex);
+
+    return 0;
 }
 
 
@@ -87,10 +115,6 @@ void draw_audio(float *audio, float scale, float thick, uint32_t h, uint32_t w, 
             points[i].y = y;
         }
 
-        // Set color once (instead of per-vertex)
-        //SDL_SetRenderDrawColor(renderer, 220, 240, 255, 255);  // cyan-ish, fully opaque
-
-        // One call → draws 4095 connected line segments
         SDL_RenderLines(renderer, points, n);
 
         SDL_free(points);
