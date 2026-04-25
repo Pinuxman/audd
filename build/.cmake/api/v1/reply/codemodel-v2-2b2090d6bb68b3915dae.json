@@ -7,21 +7,21 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "SDL3::Headers::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-SDL3__Headers-b79fc67a60319ec898ee.json",
+					"jsonFile" : "target-SDL3__Headers-ab8bb1b9529a4eabd6d2.json",
 					"name" : "SDL3::Headers",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "SDL3::SDL3-shared::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-SDL3__SDL3-shared-dad2b330cfd48baf159c.json",
+					"jsonFile" : "target-SDL3__SDL3-shared-7c1fcfc7431664604c67.json",
 					"name" : "SDL3::SDL3-shared",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "SDL3::SDL3_test::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-SDL3__SDL3_test-6193db1ea7fa0ae9722d.json",
+					"jsonFile" : "target-SDL3__SDL3_test-cd2ed0b373d760be5e80.json",
 					"name" : "SDL3::SDL3_test",
 					"projectIndex" : 0
 				}
@@ -75,7 +75,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "VoiceApp::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-VoiceApp-059c738cc13c7786cdde.json",
+					"jsonFile" : "target-VoiceApp-a23a0316353e689304c7.json",
 					"name" : "VoiceApp",
 					"projectIndex" : 0
 				}
