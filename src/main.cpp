@@ -1,6 +1,7 @@
 #include "ui/ui_manager.h"
 #include "audio/audio.h"
 #include "effects/sine_effect.h"
+#include "effects/log_scale.h"
 #include <memory>
 #include <vector>
 #include <cstdio>
@@ -21,12 +22,12 @@ int main(int argc, char* argv[]) {
     // Пул эффектов
     std::vector<std::unique_ptr<IEffect>> effects;
     effects.push_back(std::make_unique<SineEffect>());
+    effects.push_back(std::make_unique<LogarithmicScaleEffect>());
 
     size_t active_idx = 0;
     IEffect* current_effect = effects[active_idx].get();
     bool effect_enabled = true;
 
-    float audio_buf[CAPTURE_SAMPLES];
     bool clear_screen = true;
 
     while (ui.is_running()) {
@@ -35,6 +36,7 @@ int main(int argc, char* argv[]) {
 
         // Управление
         if (keys[SDL_SCANCODE_1]) { active_idx = 0; current_effect = effects[active_idx].get(); effect_enabled = true; }
+        if (keys[SDL_SCANCODE_2]) { active_idx = 1; current_effect = effects[active_idx].get(); effect_enabled = true; }
         if (keys[SDL_SCANCODE_SPACE]) effect_enabled = !effect_enabled;
         if (keys[SDL_SCANCODE_UP])    clear_screen = true;
         if (keys[SDL_SCANCODE_DOWN])  clear_screen = false;
